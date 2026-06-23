@@ -13,6 +13,13 @@ const biblioteca = {
         };
 
         this.livros.push(livro);
+    },
+
+    mostrarLivros(){
+        for(let i=0; i<this.livros.length; i++){
+            const L= this.livros[i];
+            console.log(L.nome);
+        }
     }
 };
 
@@ -20,7 +27,7 @@ biblioteca.adicionarLivros(
     "The Call of Cthulhu",
     "H. P. Lovecraft",
     1928,
-    "Terror Cósmico"
+    "terror cosmico"
 );
 
 biblioteca.adicionarLivros(
