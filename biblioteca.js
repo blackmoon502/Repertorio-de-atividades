@@ -18,7 +18,7 @@ const biblioteca = {
     mostrarLivros(){
         for(let i=0; i<this.livros.length; i++){
             const L= this.livros[i];
-            console.log(L.nome);
+            console.log(L.nomet + " - " + L.autor + " - " + L.ano + " - " + L.genero);
         }
     }
 };
