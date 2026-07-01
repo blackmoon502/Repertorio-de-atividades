@@ -93,7 +93,19 @@ const biblioteca = {
         }
 
         console.log(`O livro "${nome}" não existe na biblioteca.`);
-    }
+    },
+    removerlivros(nome){
+        for(let i=0; i<this.livros.length; i++){
+            if(this.livros[i].nome.toLowerCase() === nome.toLowerCase()){
+                const removido=this.livros[i]
+                this.livros.splice(i,1)
+                console.log("livro removido:", removido.nome);
+                return;
+            } console.log("livro não encontrado");
+        }
+        console.log("livro não encontrado");
+        return;
+    } 
 };
 
 biblioteca.adicionarLivros(
@@ -121,3 +133,5 @@ console.log(biblioteca.livros);
 biblioteca.mostrarLivros();
 biblioteca.alugar("Harry Potter e a Pedra Filosofal");
 biblioteca.devolver("The Call of Cthulhu");
+biblioteca.removerlivros("The Alchemist");
+biblioteca.mostrarLivros("The Alchemist")
