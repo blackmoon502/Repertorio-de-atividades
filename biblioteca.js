@@ -105,7 +105,20 @@ const biblioteca = {
         }
         console.log("livro não encontrado");
         return;
-    } 
+    },
+    buscar(nome){
+        for(let i=0; i<this.livros.length; i++){
+            const livro=this.livros[i]
+            if(this.livros[i].nome.toLowerCase() === nome.toLowerCase()){
+                console.log('Livro encontrado Deseja alugar:')
+                console.log("nome:" + livro.nome);
+                console.log("estoque:" + livro.estoque);
+                return
+            }
+        }
+        console.log("livro não encontrado");
+        return null
+    }
 };
 
 biblioteca.adicionarLivros(
@@ -134,4 +147,6 @@ biblioteca.mostrarLivros();
 biblioteca.alugar("Harry Potter e a Pedra Filosofal");
 biblioteca.devolver("The Call of Cthulhu");
 biblioteca.removerlivros("The Alchemist");
-biblioteca.mostrarLivros("The Alchemist")
+biblioteca.mostrarLivros("The Alchemist");
+biblioteca.alugar("The Alchemist");
+biblioteca.buscar("The call of Cthulhu")
