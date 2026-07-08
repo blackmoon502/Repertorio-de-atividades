@@ -1,152 +1,179 @@
-const biblioteca = {
+export const biblioteca = {
     livros: [],
-    estoque: 1,
 
-
-    adicionarLivros(nome, autor, ano, genero) {
+    adicionarLivros(nome, autor, genero, estoque) {
         const livro = {
             nome,
             autor,
-            ano,
             genero,
-            disponivel: true,
-            alugado: false,
-            vezesAlugado: 0,
-            estoque: 1
+            estoque,
+            estoqueTotal: estoque,
+            alugados: 0,
+            vezesAlugado: 0
         };
 
         this.livros.push(livro);
+        return true;
     },
 
-    mostrarLivros(){
-        for(let i=0; i<this.livros.length; i++){
-            const L= this.livros[i];
-            console.log(L.nome + " - " + L.autor + " - " + L.ano + " - " + L.genero);
+    mostrarLivros() {
+        console.log("=== LISTA DE LIVROS ===");
+
+        for (let i = 0; i < this.livros.length; i++) {
+            const livro = this.livros[i];
+
+            console.log(
+                `${i + 1}. ${livro.nome} - ${livro.autor} | ${livro.genero} | Alugado ${livro.vezesAlugado}x | Estoque: ${livro.estoque}/${livro.estoqueTotal}`
+            );
         }
-    },  
-    livrosAlugar(nome){
-        for(let i = 0; i < this.livros.length; i++){
-            const L = this.livros[i];
-    
-            if(L.nome === nome){
-                if(L.disponivel && L.estoque > 0){
-                    L.disponivel = false;
-                    L.alugado = true;
-                    L.vezesAlugado++;
-                    L.estoque--;
-    
-                    console.log("Livro alugado:", L.nome);
-                } else {
-                    console.log("Livro indisponível:", L.nome);
-                }
-                return;
-            }
-        }
-    
-        console.log("Livro não existe");
     },
+
+    mostrarTabela() {
+        console.table(this.livros);
+    },
+
     alugar(nome) {
-        if (!nome) {
-            console.log("Informe o nome do livro que deseja alugar.");
-            return;
-        }
-
         for (let i = 0; i < this.livros.length; i++) {
             const l = this.livros[i];
 
-            if (l.nome === nome) {
+            if (l.nome.toLowerCase() === nome.toLowerCase()) {
+
                 if (l.estoque > 0) {
                     l.estoque--;
+                    l.alugados++;
                     l.vezesAlugado++;
 
-                    console.log(`O livro "${nome}" foi alugado com sucesso!`);
-                } else {
-                    console.log(`O livro "${nome}" está sem estoque, por favor escolha outro livro.`);
+                    console.log(nome + " alugado com sucesso!");
+                    return true;
                 }
 
-                return;
+                console.log("O livro " + nome + " está sem estoque.");
+                return false;
             }
         }
 
-        console.log(`O livro "${nome}" não existe na biblioteca.`);
+        console.log("Livro não encontrado.");
+        return false;
     },
 
     devolver(nome) {
-        if (!nome) {
-            console.log("Informe o nome do livro que deseja devolver.");
-            return;
-        }
-
         for (let i = 0; i < this.livros.length; i++) {
             const l = this.livros[i];
 
-            if (l.nome === nome) {
-                if (l.estoque < l.estoqueInicial) {
+            if (l.nome.toLowerCase() === nome.toLowerCase()) {
+
+                if (l.alugados > 0) {
+                    l.alugados--;
                     l.estoque++;
-                    console.log(`O livro "${nome}" foi devolvido com sucesso!`);
-                } else {
-                    console.log(`O livro "${nome}" já está disponível na biblioteca.`);
+
+                    console.log(nome + " devolvido com sucesso!");
+                    return true;
                 }
 
-                return;
+                console.log("Nenhum exemplar de " + nome + " está alugado.");
+                return false;
             }
         }
 
-        console.log(`O livro "${nome}" não existe na biblioteca.`);
+        console.log("Livro não encontrado.");
+        return false;
     },
-    removerlivros(nome){
-        for(let i=0; i<this.livros.length; i++){
-            if(this.livros[i].nome.toLowerCase() === nome.toLowerCase()){
-                const removido=this.livros[i]
-                this.livros.splice(i,1)
-                console.log("livro removido:", removido.nome);
-                return;
-            } console.log("livro não encontrado");
-        }
-        console.log("livro não encontrado");
-        return;
-    },
-    buscar(nome){
-        for(let i=0; i<this.livros.length; i++){
-            const livro=this.livros[i]
-            if(this.livros[i].nome.toLowerCase() === nome.toLowerCase()){
-                console.log('Livro encontrado Deseja alugar:')
-                console.log("nome:" + livro.nome);
-                console.log("estoque:" + livro.estoque);
-                return
+    
+    livrosDisponiveis() {
+        const disponiveis = [];
+    
+        for (let i = 0; i < this.livros.length; i++) {
+            if (this.livros[i].estoque > 0) {
+                disponiveis.push(this.livros[i]);
             }
         }
-        console.log("livro não encontrado");
-        return null
+    
+        return disponiveis;
+    },
+
+    estatisticas() {
+        let disponiveis = 0;
+        let alugados = 0;
+        let totalExemplares = 0;
+        let maisAlugado = null;
+    
+        for (let i = 0; i < this.livros.length; i++) {
+            const livro = this.livros[i];
+    
+            disponiveis += livro.estoque;
+            alugados += livro.alugados;
+            totalExemplares += livro.estoqueTotal;
+    
+            if (maisAlugado === null || livro.vezesAlugado > maisAlugado.vezesAlugado) {
+                maisAlugado = livro;
+            }
+        }
+    
+        return {
+            totalLivros: this.livros.length,
+            totalExemplares: totalExemplares,
+            disponiveis: disponiveis,
+            alugados: alugados,
+            maisAlugado: maisAlugado
+        };
+    },
+
+    removerLivro(nome) {
+        for (let i = 0; i < this.livros.length; i++) {
+
+            if (this.livros[i].nome.toLowerCase() === nome.toLowerCase()) {
+
+                const removido = this.livros[i];
+                this.livros.splice(i, 1);
+
+                console.log("Livro removido:", removido.nome);
+                return true;
+            }
+        }
+
+        console.log("Livro não encontrado.");
+        return false;
+    },
+
+    buscarLivro(nome) {
+        for (let i = 0; i < this.livros.length; i++) {
+
+            const l = this.livros[i];
+
+            if (l.nome.toLowerCase() === nome.toLowerCase()) {
+                console.log("Livro encontrado:");
+                console.log(l);
+            return l;
+        }
     }
+    console.log("Livro não encontrado")
+    return null
+}
+
 };
 
-biblioteca.adicionarLivros(
-    "Harry Potter e a Pedra Filosofal",
-    "J. K. Rowling",
-    1997,
-    "Fantasia"
-);
-
-biblioteca.adicionarLivros(
-    "The Call of Cthulhu",
-    "H. P. Lovecraft",
-    1928,
-    "terror cosmico"
-);
-
-biblioteca.adicionarLivros(
-    "The Alchemist",
-    "Paulo Coelho",
-    1988,
-    "Fantasia"
-);
-
-console.log(biblioteca.livros);
+// Mostrar livros
 biblioteca.mostrarLivros();
-biblioteca.alugar("Harry Potter e a Pedra Filosofal");
-biblioteca.devolver("The Call of Cthulhu");
-biblioteca.removerlivros("The Alchemist");
-biblioteca.mostrarLivros("The Alchemist");
-biblioteca.alugar("The Alchemist");
-biblioteca.buscar("The call of Cthulhu")
+
+// Alugar
+//biblioteca.alugar("Attack on Titan");
+//biblioteca.alugar("Attack on Titan");
+//biblioteca.alugar("Attack on Titan");
+
+// Devolver
+//biblioteca.devolver("Attack on Titan");
+//biblioteca.devolver("Attack on Titan");
+//biblioteca.devolver("Attack on Titan");
+
+
+// Mostrar novamente
+biblioteca.mostrarLivros();
+
+//remover
+//biblioteca.removerLivro("Jujutsu Kaisen");
+
+//buscar
+//biblioteca.buscarLivro("Demon Slayer");
+
+biblioteca.mostrarTabela();
+biblioteca.mostrarLivros();
